@@ -1,0 +1,4 @@
+# Exact versions used by the asyncio + h11 demonstration.
+click==8.5.0
+h11==0.16.0
+uvicorn==0.54.0
