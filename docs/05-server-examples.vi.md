@@ -82,3 +82,36 @@ Script kiểm tra 21 trường JSON của syntax, concurrency tối đa 2, cả 
 Mỗi worker là một process riêng. Không dùng `--reload` cùng `--workers`; memory cache trong một worker không tự đồng bộ sang worker khác. Reload phục vụ phát triển. Khi deploy, bổ sung proxy/TLS, body limit, timeout, monitoring, auth và shutdown phù hợp workload.
 
 Nguồn: [Node HTTP](https://nodejs.org/api/http.html), [Go HTTP](https://pkg.go.dev/net/http), [ASGI HTTP spec](https://asgi.readthedocs.io/en/latest/specs/www.html), [Uvicorn settings](https://uvicorn.dev/settings/).
+
+## Luồng request trong chính các demo
+
+```mermaid
+sequenceDiagram
+    participant A as Client A
+    participant S as Demo server
+    participant R as Runtime timer
+    participant B as Client B
+    A->>S: GET /wait?ms=100
+    S->>R: Schedule timer or await sleep
+    B->>S: GET /sum?a=2&b=3
+    S-->>B: 200 {sum:5}
+    R-->>S: Timer ready, resume A's work
+    S-->>A: 200 {waited_ms:100}
+```
+
+Sơ đồ cho thấy một thứ tự có thể xảy ra khi B tới trong lúc A đang chờ. Scheduler không cam kết B luôn hoàn tất trước A. `/wait` mô phỏng I/O bằng timer, không kết nối DB; `/sum` là CPU work rất nhỏ và có validation đồng bộ.
+
+| Bước | Node | Go | Python |
+| --- | --- | --- | --- |
+| Nhận request | `http.createServer` callback | `ServeHTTP` handler | Uvicorn gọi `app(scope, receive, send)` |
+| Đọc path/query | URL + kiểm tra query gốc | URL + `url.ParseQuery` | ASGI path đã decode + query bytes gốc + parse |
+| Validate | Regex + bounds | Regex + bounds | Regex + bounds |
+| `/wait` | Callback `setTimeout` | Timer + `select` context | `await asyncio.sleep` |
+| Trả JSON | `res.end` | `WriteHeader`, encoder | ASGI start/body events |
+| Client đóng sớm | Clear timer khi `close` | Context kết thúc | Demo không đọc disconnect trong sleep |
+
+Thử gọi `/sum` khi `/wait` đang chạy bằng hai terminal, rồi thay timer bằng CPU loop trong một nhánh thử nghiệm để quan sát khác biệt. Không giữ CPU loop đó trong server thật. Theo dõi CPU và tổng thời gian nhiều request; một lần chạy trên laptop không đủ để xếp hạng runtime.
+
+## Từ demo lên stack ứng dụng
+
+Xem [Node stacks](guides/node-stacks.vi.md), [Go stacks](guides/go-stacks.vi.md) và [Python backend](guides/python-backend.vi.md) để thêm routing, validation, database, transaction, queue và quan sát hệ thống. Các recipe nêu dependency/prerequisite riêng; chúng không thay đổi contract của ba demo ở chương này.

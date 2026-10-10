@@ -39,3 +39,19 @@ Các ô trong bảng cú pháp là mảnh code trong ngữ cảnh phù hợp. Fi
 ## Nguồn nền tảng
 
 [Node documentation](https://nodejs.org/api/), [Go specification](https://go.dev/ref/spec), [Python tutorial](https://docs.python.org/3.12/tutorial/), [TypeScript handbook](https://www.typescriptlang.org/docs/handbook/intro.html).
+
+## Phương pháp tham khảo và đánh giá thư viện
+
+| Nguồn discovery | Vai trò trong guide |
+| --- | --- |
+| [golang-for-nodejs-developers](https://github.com/miguelmota/golang-for-nodejs-developers) | Cách trình bày bài toán cú pháp cạnh nhau |
+| [best-of-ml-python](https://github.com/lukasmasuch/best-of-ml-python) | Mở rộng phạm vi ML/data: NLP, ảnh, audio, time series, serving, experiment và artifact |
+| [awesome-python](https://github.com/vinta/awesome-python) | Ghép Python web, database, tooling và data ecosystem |
+| [awesome-go](https://github.com/avelino/awesome-go) | Khám phá router, driver, jobs, RPC và CLI trong Go |
+| [awesome-nodejs](https://github.com/sindresorhus/awesome-nodejs) | Khám phá Node HTTP, validation, queue, tests và tooling |
+
+Danh sách tổng hợp dùng để tìm category/candidate. API và hành vi được đối chiếu nguồn official ghi ngay tại mỗi mục; mô tả, code và đánh giá trong repo được viết riêng. Không sao chép bảng ranking, badge/score hay mô tả của best-of-ml-python (nguồn có license CC-BY-SA-4.0). Vị trí trong discovery list không phải bằng chứng một package luôn nhanh/an toàn/phù hợp hơn.
+
+Đánh giá theo sáu câu hỏi: giải quyết việc gì; input/output ra sao; tích hợp với stack nào; resource/dependency nào cần; lỗi hoặc giới hạn nào đáng quan tâm; chi phí team/deploy/upgrade có đáng đổi lấy chức năng không. “Dùng nhiều” ở đây là shortlist đại diện, không khẳng định top theo download/stars.
+
+[5 guide chuyên sâu](../README.vi.md) phân biệt numerical engine, framework, SDK, orchestration, tracking và serving. Model/artifact/data license riêng với license code trong repo. Ví dụ có file/model/key/hardware được ghi prerequisites; lab data offline có requirements và CI riêng.

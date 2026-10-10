@@ -120,3 +120,17 @@ print(user.model_dump())
 ```
 
 Đây không phải ba schema hoàn toàn tương đương: chính sách extra field, Unicode, coercion và missing/null cần khai báo nếu muốn chung contract. Validation cấu trúc xong vẫn cần kiểm tra quyền và quy tắc business. Với API public, OpenAPI/JSON Schema và contract test giảm lệch giữa các service.
+
+## Đọc sâu theo stack và loại công việc
+
+Catalogue phía trên là bản đồ nhanh. Xem [Node](guides/node-stacks.vi.md), [Go](guides/go-stacks.vi.md), [Python backend](guides/python-backend.vi.md), [Python data](guides/python-data.vi.md) và [Python AI/ML](guides/python-ai-ml.vi.md) cho profile chi tiết, example và stack recipe.
+
+### Cùng payload, validator không nhất thiết trả cùng contract
+
+Ba recipe API dùng `{"productId":"book","quantity":2}` và từ chối quantity ngoài 1–100, chuỗi `"2"` hoặc extra field. Node Zod và Go recipe chọn `400`; FastAPI/Pydantic mặc định `422`. Ajv/Pydantic có khả năng coerce tùy cấu hình, còn schema của recipe cố tình dùng strict numeric. Go json decoder không tự validate range, tag JSON không phải validator. Thống nhất contract tại boundary nếu clients dùng chung nhiều backend.
+
+### Chọn một tầng chính cho mỗi trách nhiệm
+
+Prisma/Drizzle/pg là ba mức abstraction DB, không phải ba lớp luôn phải cài. pgx/sqlc/GORM có trách nhiệm chồng lấn một phần; SQLAlchemy cần driver và Alembic là migration. Queue giải quyết dispatch/retry, Redis cache giải quyết truy cập nhanh, OpenTelemetry giải quyết telemetry; không có tool nào thay constraint/transaction hoặc auth.
+
+Với Python, NumPy là numerical arrays, pandas/Polars là table APIs, PyArrow là interchange/Parquet, DuckDB là analytical SQL; Dask/Spark thêm distributed execution. PyTorch/TF/JAX là nền training/compute; LangChain/LlamaIndex/LangGraph là application orchestration; vLLM/Ollama/ONNX Runtime là inference/serving. Phân biệt này tránh “stack AI” cài tất cả package nhưng thiếu data và deployment design.

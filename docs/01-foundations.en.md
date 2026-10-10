@@ -39,3 +39,19 @@ Syntax table cells are fragments that require an appropriate surrounding context
 ## Foundation sources
 
 [Node documentation](https://nodejs.org/api/), [Go specification](https://go.dev/ref/spec), [Python tutorial](https://docs.python.org/3.12/tutorial/), [TypeScript handbook](https://www.typescriptlang.org/docs/handbook/intro.html).
+
+## Source method and library assessments
+
+| Discovery source | Role in this guide |
+| --- | --- |
+| [golang-for-nodejs-developers](https://github.com/miguelmota/golang-for-nodejs-developers) | Side-by-side syntax task format |
+| [best-of-ml-python](https://github.com/lukasmasuch/best-of-ml-python) | ML/data breadth: NLP, images, audio, time series, serving, experiments, artifacts |
+| [awesome-python](https://github.com/vinta/awesome-python) | Connect Python web, databases, tooling, and data |
+| [awesome-go](https://github.com/avelino/awesome-go) | Discover Go routers, drivers, jobs, RPC, and CLIs |
+| [awesome-nodejs](https://github.com/sindresorhus/awesome-nodejs) | Discover Node HTTP, validation, queues, testing, and tooling |
+
+Curated lists identify categories/candidates. APIs/behavior are checked against official sources linked per entry; repository descriptions, code, and assessments are original. The best-of list's ranking, badges/scores, and descriptions (CC-BY-SA-4.0) are not copied. A list position does not establish universal speed, safety, or suitability.
+
+Assess six questions: responsibility, input/output, stack integration, resources/dependencies, failure modes/limits, and whether functionality justifies team/deployment/upgrade costs. “Common” means a representative shortlist rather than measured download/star leadership.
+
+The [5 detailed guides](../README.en.md) distinguish numerical engines, frameworks, SDKs, orchestration, tracking, and serving. Models/artifacts/data have licenses separate from repository code. File/model/key/hardware prerequisites are stated; the offline data lab has its own dependencies and CI job.

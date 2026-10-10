@@ -74,3 +74,33 @@ LangChain/Genkit hỗ trợ nối các bước, nhưng không thay thiết kế 
 | Cost | Token, embedding, GPU time và lưu trữ; budget theo tenant/request. |
 
 Repo này không gọi API trả phí hoặc tải model. Các nguồn model/framework được link để lựa chọn và học thêm; capability và hardware support cần kiểm tra theo release/model cụ thể.
+
+## Luồng RAG và ML từ dữ liệu tới response
+
+```mermaid
+flowchart TD
+    Source[Versioned documents] --> Parse[Parse and split]
+    Parse --> Emb[Embedding model]
+    Emb --> Index[Index vectors metadata ACL source IDs]
+    Q[User query and tenant] --> QE[Query embedding with same model]
+    QE --> Search[Retrieve with access filters]
+    Index --> Search
+    Search --> Rank[Optional reranking]
+    Rank --> Context[Select context within token budget]
+    Context --> Gen[Generate with chosen model]
+    Gen --> Cite[Return answer and source references]
+    Cite --> Eval[Evaluate retrieval and answers separately]
+```
+Index/query cần embedding model/contract có version tương thích trong cùng vector space, đúng dimension và normalization. Dùng preprocessing/prompt riêng cho query/document nếu model yêu cầu; ACL filter làm trước khi model thấy context. Citation là source reference để kiểm tra, không tự chứng minh answer đúng. Xóa/cập nhật nguồn phải cập nhật index tương ứng. Tool call với side effect cần quyền của user và input validation ở backend. [Semantic search](https://www.sbert.net/examples/sentence_transformer/applications/semantic-search/README.html).
+
+```mermaid
+flowchart LR
+    D[Versioned dataset] --> Split[Train validation test split]
+    Split --> Train[Fit preprocessing and model on train]
+    Train --> Tune[Tune using validation]
+    Tune --> Test[Final held-out evaluation]
+    Test --> A[Versioned artifact and feature contract]
+    A --> S[Bounded inference worker or server]
+    S --> M[Monitor quality drift latency and errors]
+```
+Final test được giữ riêng, không dùng lặp lại để chọn hyperparameter. Artifact chứa feature order/types và preprocessing; serving version phải đi cùng contract. [Python AI/ML](guides/python-ai-ml.vi.md) có 31 profile và ba pipeline chi tiết; [Python data](guides/python-data.vi.md) có 12 profile và lab offline. [Node](guides/node-stacks.vi.md)/[Go](guides/go-stacks.vi.md) mô tả gateway/app integration.

@@ -74,3 +74,33 @@ LangChain/Genkit connect steps but do not replace data design, permission filter
 | Cost | Tokens, embeddings, GPU time, and storage; budgets per tenant/request. |
 
 This repository calls no paid APIs and downloads no models. Links support further learning/selection; verify capabilities and hardware support for each release/model.
+
+## RAG and ML flows from data to responses
+
+```mermaid
+flowchart TD
+    Source[Versioned documents] --> Parse[Parse and split]
+    Parse --> Emb[Embedding model]
+    Emb --> Index[Index vectors metadata ACL source IDs]
+    Q[User query and tenant] --> QE[Query embedding with same model]
+    QE --> Search[Retrieve with access filters]
+    Index --> Search
+    Search --> Rank[Optional reranking]
+    Rank --> Context[Select context within token budget]
+    Context --> Gen[Generate with chosen model]
+    Gen --> Cite[Return answer and source references]
+    Cite --> Eval[Evaluate retrieval and answers separately]
+```
+Index/query need a compatible, versioned embedding model/contract in the same vector space, with matching dimensions and normalization. Apply model-prescribed query/document preprocessing and prompts, which may differ; apply ACL filters before context reaches the model. Citations provide inspectable sources rather than proof of correctness. Deletions/updates must change the index accordingly. Side-effecting tools need user authorization and backend input validation. [Semantic search](https://www.sbert.net/examples/sentence_transformer/applications/semantic-search/README.html).
+
+```mermaid
+flowchart LR
+    D[Versioned dataset] --> Split[Train validation test split]
+    Split --> Train[Fit preprocessing and model on train]
+    Train --> Tune[Tune using validation]
+    Tune --> Test[Final held-out evaluation]
+    Test --> A[Versioned artifact and feature contract]
+    A --> S[Bounded inference worker or server]
+    S --> M[Monitor quality drift latency and errors]
+```
+Reserve final test data rather than repeatedly using it to choose hyperparameters. Artifacts carry feature order/types and preprocessing; serving versions need matching contracts. [Python AI/ML](guides/python-ai-ml.en.md) contains 31 profiles and three detailed pipelines; [Python data](guides/python-data.en.md) contains 12 profiles and an offline lab. [Node](guides/node-stacks.en.md)/[Go](guides/go-stacks.en.md) explain gateway/application integration.

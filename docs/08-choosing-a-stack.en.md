@@ -69,3 +69,17 @@ Port **behavior**, not individual lines. Establish contract tests for validation
 - Build an AI question dataset and compare direct SDK integration with orchestration on real tasks.
 
 These exercises are not implemented or covered by the existing checks. Contributions should update both language editions and place new sources near the associated claims.
+
+## From recipes to operable systems
+
+| Product | Starting point | Reason and next step |
+| --- | --- | --- |
+| Business web with backoffice | Django/DRF or Nest + UI | Auth/admin conventions or DI/modules; check permissions/transactions |
+| Small contract-driven API | Fastify/Zod/pg, chi/pgx/sqlc, FastAPI/Pydantic/SQLAlchemy | Choose by team/integrations; all need schema/error/query checks |
+| Tabular ML experiments | pandas/Pandera/sklearn/MLflow | Simple baseline and correct splits/evaluation before DL/distribution |
+| Local Parquet analytics | Polars lazy or DuckDB + PyArrow | Aggregate before materialization; measure RAM/scans/query plans |
+| AI web/RAG | Node UI/API or Go gateway + Python/model server | Separate auth/retrieval from inference capacity where needed |
+
+Promote recipes by verifying required behavior: invalid inputs rejected, cross-user rows/documents inaccessible, concurrent transactions preserving invariants, consistent dependency-timeout errors, retries avoiding duplicate side effects, bounded request/job shutdown, versioned models with rollback. Demos cover a subset rather than every integration.
+
+Change packages for measured reasons or reduced team costs: query bottlenecks need queries/indexes, model memory needs batching/quantization/topology, maintenance problems may need conventions. Node/Go/Python migrations must preserve status/error, null/coercion/date/large-integer, and cancellation contracts rather than only translate syntax.

@@ -117,7 +117,7 @@ def check_server(command, name):
                     process.wait()
 
 def check_docs():
-    for path in ROOT.rglob("*.md"):
+    for path in [*ROOT.glob("*.md"), *(ROOT / "docs").rglob("*.md")]:
         text = path.read_text()
         assert text.count("```") % 2 == 0, f"Unclosed fence: {path}"
         for target in re.findall(r"(?<!!)\[[^\]]+\]\(([^)]+)\)", text):
@@ -125,10 +125,16 @@ def check_docs():
                 continue
             local = target.split("#", 1)[0]
             assert (path.parent / local).exists(), f"Broken link: {path}: {target}"
-    vi = {p.name.replace(".vi.md", "") for p in (ROOT / "docs").glob("*.vi.md")}
-    en = {p.name.replace(".en.md", "") for p in (ROOT / "docs").glob("*.en.md")}
-    assert vi == en and len(vi) == 8, (vi, en)
-    print("PASS documentation: local links, code fences, 8 bilingual chapter pairs")
+    vi = {str(p.relative_to(ROOT / "docs")).replace(".vi.md", "") for p in (ROOT / "docs").rglob("*.vi.md")}
+    en = {str(p.relative_to(ROOT / "docs")).replace(".en.md", "") for p in (ROOT / "docs").rglob("*.en.md")}
+    assert vi == en and len(vi) == 13, (vi, en)
+    # New guides share executable/illustrative code exactly across editions.
+    for path in (ROOT / "docs" / "guides").glob("*.vi.md"):
+        counterpart = path.with_name(path.name.replace(".vi.md", ".en.md"))
+        fences = lambda p: re.findall(r"```[^\n]*\n(.*?)```", p.read_text(), re.S)
+        assert fences(path) == fences(counterpart), f"Guide code parity: {path}"
+    assert (ROOT / "README.md").read_text() == (ROOT / "README.vi.md").read_text()
+    print("PASS documentation: links, fences, 13 bilingual pairs, guide code parity")
 
 if __name__ == "__main__":
     check_docs()

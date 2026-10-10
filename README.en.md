@@ -15,12 +15,24 @@ Compare syntax through examples, server execution models, and web/backend/valida
 | 07 | [AI, ML and model serving](docs/07-ai-platforms.en.md) |
 | 08 | [Stack selection, measurement and migration](docs/08-choosing-a-stack.en.md) |
 
+## Detailed guides
+
+| Guide | Coverage |
+| --- | --- |
+| [Node stacks](docs/guides/node-stacks.en.md) | Web/UI, validation, SQL/ORM, caches/jobs, tests, observability, AI, and 3 recipes |
+| [Go stacks](docs/guides/go-stacks.en.md) | HTTP/routers, DTOs, pgx/sqlc/GORM, migrations, RPC/jobs, tests, and 3 recipes |
+| [Python backend](docs/guides/python-backend.en.md) | FastAPI/Django/Flask, ASGI/WSGI, Pydantic, DBs, HTTP pools, Celery, and 4 recipes |
+| [Python data](docs/guides/python-data.en.md) | 12 numerical/tabular/analytics/distributed/visualization tools and an offline lab |
+| [Python AI/ML](docs/guides/python-ai-ml.en.md) | 31 classical ML, deep learning, NLP/CV/audio/time-series, RAG/serving, and MLOps tools |
+
+Profiles explain purpose, scenarios, examples/results, tradeoffs, and official docs. [Chapter 4](docs/04-server-runtime.en.md) diagrams request flows and explains I/O, CPU, pools, cancellation, and backpressure.
+
 ## What is included?
 
 - 44 side-by-side syntax tasks and semantic differences.
-- 9 runnable programs: syntax, concurrency, and HTTP servers for each language.
-- 52 assessed core tools, plus cache/queue/auth/migration/tooling and AI platforms.
-- 8 chapters × 2 languages, official sources, and GitHub Actions checks.
+- 10 runnable programs: syntax, concurrency, HTTP servers, and a Python data/ML lab.
+- Core comparison catalogue plus detailed library profiles and complete stack recipes.
+- 8 chapters + 5 detailed guides × 2 languages, official sources, and GitHub Actions checks.
 
 ## Quick start
 
@@ -45,3 +57,5 @@ go run ./examples/syntax/go
 ## Sources, versions, and contributions
 
 Inspired by [Miguel Mota's comparison format](https://github.com/miguelmota/golang-for-nodejs-developers); code/content here are newly written. Sources/assessments checked on 2026-10-10. The representative shortlist is not a measured popularity ranking. See [scope](docs/01-foundations.en.md), [contributing](CONTRIBUTING.en.md), and [MIT License](LICENSE).
+
+The optional [offline data lab](docs/guides/python-data.en.md) has a separate environment and dependency file. Framework/model snippets in guides are illustrative; CI checks the complete programs rather than every optional integration.

@@ -120,3 +120,17 @@ print(user.model_dump())
 ```
 
 These are not fully equivalent schemas: extra fields, Unicode, coercion, and missing/null policies need explicit definitions for a shared contract. Structural validation still needs authorization and business rules afterward. OpenAPI/JSON Schema and contract tests reduce drift across public services.
+
+## Read deeply by stack and workload
+
+The catalogue above is a quick map. See [Node](guides/node-stacks.en.md), [Go](guides/go-stacks.en.md), [Python backend](guides/python-backend.en.md), [Python data](guides/python-data.en.md), and [Python AI/ML](guides/python-ai-ml.en.md) for detailed profiles, examples, and stack recipes.
+
+### Same payload, different validation contracts
+
+The three API recipes use `{"productId":"book","quantity":2}` and reject quantities outside 1–100, string `"2"`, or extra fields. Node Zod and Go choose `400`; FastAPI/Pydantic defaults to `422`. Ajv/Pydantic can coerce depending on configuration, while these recipes use strict numeric input. Go's JSON decoder does not validate ranges, and JSON tags are not validators. Normalize boundary contracts when clients share multiple backends.
+
+### Choose a primary layer for each responsibility
+
+Prisma/Drizzle/pg are different DB abstraction levels, not mandatory simultaneous layers. pgx/sqlc/GORM overlap partly; SQLAlchemy needs a driver, while Alembic manages migrations. Queues dispatch/retry, Redis caches accelerate access, and OpenTelemetry collects telemetry; none replaces constraints/transactions or auth.
+
+In Python, NumPy supplies numerical arrays, pandas/Polars table APIs, PyArrow interchange/Parquet, and DuckDB analytical SQL; Dask/Spark add distributed execution. PyTorch/TF/JAX address training/compute; LangChain/LlamaIndex/LangGraph application orchestration; vLLM/Ollama/ONNX Runtime inference/serving. These distinctions prevent installing every AI package while omitting data/deployment design.

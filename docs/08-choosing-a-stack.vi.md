@@ -69,3 +69,17 @@ Port theo **hành vi**, không theo từng dòng. Viết contract test cho valid
 - Tạo bộ câu hỏi AI với output kỳ vọng; so integration direct SDK và orchestration theo task thực tế.
 
 Đây là bài tập chưa triển khai, không thuộc các ví dụ đã được bộ check xác nhận. Khi đóng góp, cập nhật cả hai bản ngôn ngữ và ghi nguồn mới gần claim tương ứng.
+
+## Từ recipe đến hệ thống có thể vận hành
+
+| Sản phẩm | Điểm khởi đầu | Lý do và bước tiếp theo |
+| --- | --- | --- |
+| Web business có backoffice | Django/DRF hoặc Nest + UI | Convention/auth/admin hoặc DI/modules; kiểm tra permission và transaction |
+| API nhỏ có contract rõ | Fastify/Zod/pg, chi/pgx/sqlc, FastAPI/Pydantic/SQLAlchemy | Chọn theo team và integration; cả ba cần schema/error/query checks |
+| Bảng/ML thử nghiệm | pandas/Pandera/sklearn/MLflow | Baseline đơn giản, split/eval đúng trước DL/distributed |
+| Analytics Parquet local | Polars lazy hoặc DuckDB + PyArrow | Aggregate trước materialize; đo RAM/scan/query plan |
+| AI web/RAG | Node UI/API hoặc Go gateway + Python/model server | Tách app auth/retrieval khỏi inference capacity khi cần |
+
+Đưa recipe vào production theo hành vi cần chứng minh: input sai bị từ chối; user khác không đọc được row/document; transaction giữ invariant khi concurrent; dependency timeout có lỗi thống nhất; retry không lặp side effect; shutdown drain được request/job; model có version và rollback. Demo kiểm tra một phần các hành vi này, không mặc định đã hoàn thành mọi integration.
+
+Thay package chỉ khi có lý do đo được hoặc giảm chi phí team: query bottleneck cần query/index, RAM model cần batch/quantization/topology, code khó maintain có thể cần convention. Migration giữa Node/Go/Python phải giữ contract status/error, null/coercion/date/large-int và cancellation, không chỉ dịch cú pháp.

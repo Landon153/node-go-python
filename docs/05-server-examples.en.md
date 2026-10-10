@@ -82,3 +82,36 @@ Checks cover the 21 syntax JSON fields, a concurrency cap of 2, all three HTTP s
 Each worker is a separate process. Reload and workers cannot be combined; a cache in one worker is not automatically synchronized with other workers. Reload is a development feature. Deployment needs workload-appropriate proxy/TLS, body limits, timeouts, monitoring, authentication, and shutdown behavior.
 
 Sources: [Node HTTP](https://nodejs.org/api/http.html), [Go HTTP](https://pkg.go.dev/net/http), [ASGI HTTP spec](https://asgi.readthedocs.io/en/latest/specs/www.html), [Uvicorn settings](https://uvicorn.dev/settings/).
+
+## Request flow in these exact demos
+
+```mermaid
+sequenceDiagram
+    participant A as Client A
+    participant S as Demo server
+    participant R as Runtime timer
+    participant B as Client B
+    A->>S: GET /wait?ms=100
+    S->>R: Schedule timer or await sleep
+    B->>S: GET /sum?a=2&b=3
+    S-->>B: 200 {sum:5}
+    R-->>S: Timer ready, resume A's work
+    S-->>A: 200 {waited_ms:100}
+```
+
+This is one possible ordering when B arrives while A waits. Scheduling does not guarantee B always finishes first. `/wait` simulates I/O with a timer and uses no DB; `/sum` performs tiny CPU work with synchronous validation.
+
+| Step | Node | Go | Python |
+| --- | --- | --- | --- |
+| Receive request | `http.createServer` callback | `ServeHTTP` handler | Uvicorn calls `app(scope, receive, send)` |
+| Read path/query | URL + raw query checks | URL + `url.ParseQuery` | Decoded ASGI path + raw query bytes + parsing |
+| Validate | Regex + bounds | Regex + bounds | Regex + bounds |
+| `/wait` | `setTimeout` callback | Timer + context `select` | `await asyncio.sleep` |
+| Return JSON | `res.end` | `WriteHeader`, encoder | ASGI start/body events |
+| Early client close | Clear timer on `close` | Context ends | Demo does not read disconnect during sleep |
+
+Call `/sum` while `/wait` runs from two terminals, then replace the timer with CPU work on an experimental branch to observe the difference. Keep that CPU loop out of the real server. Observe CPU and aggregate request time; one laptop run cannot rank runtimes.
+
+## From demos to application stacks
+
+See [Node stacks](guides/node-stacks.en.md), [Go stacks](guides/go-stacks.en.md), and [Python backend](guides/python-backend.en.md) for routing, validation, databases, transactions, queues, and observability. Recipes state their own dependencies/prerequisites; they do not change the three demos' contracts.
